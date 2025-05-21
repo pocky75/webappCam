@@ -31,7 +31,8 @@ def add_contact():
     return render_template('index.html', uploaded_photo=url_for('static', filename=f'images/{photo_filename}'))
 ```
 2️⃣ index.html에서는 이름, 전화번호 아래 생일, 사진, 추가 코드를 추가함
-아래 {% if uploaded_photo %} 코드는 uploaded_photo라는 변수가 존재하고 값이 있을 경우에만 아래의 HTML 코드를 렌더링하고,
+아래 {% if uploaded_photo %} 코드는 uploaded_photo라는 
+변수가 존재하고 값이 있을 경우에만 아래의 HTML 코드를 렌더링하고,
 {% endif %}는 조건문을 닫는 역할을 하며,
 {{ uploaded_photo }} 코드는 uploaded_photo 변수의 값을 HTML에 삽입한 뒤에
 uploaded_photo라는 변수가 flask 백엔드에서 전달되었을 때만 업로드된 사진을 표시하는 역할을 한다.
