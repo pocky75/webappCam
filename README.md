@@ -1,7 +1,7 @@
 # webappCam
 기존의 https://github.com/pocky75/webApp 확장버전
 
-# 1차 확장 기능
+# 1차 확장 기능☝️
 웹브라우저에서 파일을 선택해서 서버로 전송하고,
 서버는 이미지 파일을 /static/uploads 폴더에 저장함
 addbook.txt 파일에 내가 적은 내용저장
@@ -68,7 +68,7 @@ static/images폴더를 만들어 images파일에 저장되도록 변경
 이렇게 파일을 만든 뒤 텍스트를 넣은 뒤 저장을 누르면 아래 사진처럼 사진이 보임
 ![스크린샷 2025-05-21 161913](https://github.com/user-attachments/assets/1c64746c-b837-4d11-ac2b-4b8de20e2ce3)
 
-# 2차 확장 기능
+# 2차 확장 기능✌️
 - 1차 확장 기능과 같이 추가로 웹캠으로 촬영하는 기능 추가
 
 # 추가 코드
@@ -141,3 +141,144 @@ JavaScript를 사용해 웹캠에서 이미지를 캡처한 후 서버로 전송
 촬영 버튼 누르면 아래처럼 저장되었다고 메세지가 나오고,
 images에 사진이 저장된다.
 ![스크린샷 2025-05-21 165802](https://github.com/user-attachments/assets/389bea80-27ae-4352-bf5a-47b8ad566175)
+![스크린샷 2025-05-21 170110](https://github.com/user-attachments/assets/d0c3af68-29e6-4a6a-a13c-63e7dbbc6bd4)
+
+# 2차 최종 코드
+1️⃣ app.py
+```
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
+import csv
+import os
+
+app = Flask(__name__)
+UPLOAD_FOLDER = 'static/images'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
+@app.route('/add', methods=['POST'])
+def add_contact():
+    name = request.form['pyname']
+    phone = request.form['pyphone']
+    birthday = request.form['pybirthday']  # 생일 입력 추가
+
+    # 사진 업로드 처리
+    photo = request.files['pyphoto']
+    photo_filename = photo.filename if photo.filename else 'default.png'  # 기본값 설정
+    if photo and photo_filename != 'default.png':
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)  # 폴더 생성
+        photo.save(os.path.join(app.config['UPLOAD_FOLDER'], photo_filename))
+
+    with open('addbook.txt', 'a', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow([name, phone, birthday, photo_filename])  # 사진 파일명 저장 추가
+
+    # 저장 후 입력 페이지로 리다이렉트
+    return render_template('index.html', uploaded_photo=url_for('static', filename=f'images/{photo_filename}'))
+
+
+@app.route('/capture', methods=['POST'])
+def capture():
+    if 'webcam_photo' in request.files:
+        photo = request.files['webcam_photo']
+        photo_path = os.path.join(app.config['UPLOAD_FOLDER'], 'webcam_photo.png')
+        photo.save(photo_path)
+        return jsonify({'message': 'Photo saved successfully!', 'photo_path': photo_path})
+    return jsonify({'error': 'No photo uploaded'}), 400
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+2️⃣ index.html
+```
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Address Book</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Address Book</h1>
+    <form action="/add" method="POST" enctype="multipart/form-data">
+        <label for="pyname">이름:</label>
+        <input type="text" id="pyname" name="pyname" required>
+        <br><br>
+        <label for="pyphone">전화번호:</label>
+        <input type="text" id="pyphone" name="pyphone" required>
+        <br><br>
+        <label for="pybirthday">생일:</label>
+        <input type="date" id="pybirthday" name="pybirthday" required>
+        <br><br>
+        <label for="pyphoto">사진:</label>
+        <input type="file" id="pyphoto" name="pyphoto" accept="image/*">
+        <br><br>
+        <button type="submit">추가</button>
+    </form>
+
+    {% if uploaded_photo %}
+    <h2>업로드된 사진:</h2>
+    <img src="{{ uploaded_photo }}" alt="Uploaded Photo" style="max-width: 300px; max-height: 300px;">
+    {% endif %}
+
+    <h2>웹캠 촬영</h2>
+    <video id="webcam" autoplay playsinline style="max-width: 300px; max-height: 300px;"></video>
+    <canvas id="canvas" style="display: none;"></canvas>
+    <br>
+    <button id="captureButton">촬영</button>
+
+    <script>
+        const video = document.getElementById('webcam');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('captureButton');
+
+        // 웹캠 활성화
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error('웹캠을 활성화할 수 없습니다:', err);
+            });
+
+        // 촬영 버튼 클릭 이벤트
+        captureButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // 캡처한 이미지를 서버로 전송
+            canvas.toBlob(blob => {
+                const formData = new FormData();
+                formData.append('webcam_photo', blob, 'webcam_photo.png');
+
+                fetch('/capture', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('사진이 저장되었습니다!');
+                    location.reload();
+                })
+                .catch(err => {
+                    console.error('사진 저장 중 오류 발생:', err);
+                });
+            }, 'image/png');
+        });
+    </script>
+</body>
+</html>
+```
+
