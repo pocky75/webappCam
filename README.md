@@ -69,3 +69,75 @@ static/images폴더를 만들어 images파일에 저장되도록 변경
 ![스크린샷 2025-05-21 161913](https://github.com/user-attachments/assets/1c64746c-b837-4d11-ac2b-4b8de20e2ce3)
 
 # 2차 확장 기능
+- 1차 확장 기능과 같이 추가로 웹캠으로 촬영하는 기능 추가
+
+# 추가 코드
+1️⃣ app.py
+```
+@app.route('/capture', methods=['POST'])
+def capture():
+    if 'webcam_photo' in request.files:
+        photo = request.files['webcam_photo']
+        photo_path = os.path.join(app.config['UPLOAD_FOLDER'], 'webcam_photo.png')
+        photo.save(photo_path)
+        return jsonify({'message': 'Photo saved successfully!', 'photo_path': photo_path})
+    return jsonify({'error': 'No photo uploaded'}), 400
+```
+2️⃣ index.html
+HTML에 웹캠 화면과 촬영 버튼을 추가하고, 
+JavaScript를 사용해 웹캠에서 이미지를 캡처한 후 서버로 전송하는 기능을 구현.
+서버에서 flask를 사용해 이미지를 저장하도록 처리.
+```
+    <h2>웹캠 촬영</h2>
+    <video id="webcam" autoplay playsinline style="max-width: 300px; max-height: 300px;"></video>
+    <canvas id="canvas" style="display: none;"></canvas>
+    <br>
+    <button id="captureButton">촬영</button>
+
+    <script>
+        const video = document.getElementById('webcam');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('captureButton');
+
+        // 웹캠 활성화
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error('웹캠을 활성화할 수 없습니다:', err);
+            });
+
+        // 촬영 버튼 클릭 이벤트
+        captureButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // 캡처한 이미지를 서버로 전송
+            canvas.toBlob(blob => {
+                const formData = new FormData();
+                formData.append('webcam_photo', blob, 'webcam_photo.png');
+
+                fetch('/capture', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('사진이 저장되었습니다!');
+                    location.reload();
+                })
+                .catch(err => {
+                    console.error('사진 저장 중 오류 발생:', err);
+                });
+            }, 'image/png');
+        });
+    </script>
+```
+# 실행 화면
+![image](https://github.com/user-attachments/assets/c30fee6a-3e5f-4184-b5b1-559b68a2cc50)
+촬영 버튼 누르면 아래처럼 저장되었다고 메세지가 나오고,
+images에 사진이 저장된다.
+![스크린샷 2025-05-21 165802](https://github.com/user-attachments/assets/389bea80-27ae-4352-bf5a-47b8ad566175)
