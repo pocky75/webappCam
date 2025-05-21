@@ -281,4 +281,78 @@ if __name__ == '__main__':
 </body>
 </html>
 ```
+# style.css에서 색상 변경과 가운데 정렬 추가
+3️⃣ style.css 코드
+```
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #2c3e50; /* 어두운 파란색 배경 */
+    color: #ecf0f1; /* 밝은 텍스트 색상 */
+}
+h1, h2 {
+    text-align: center;
+    color: #4CAF50;
+}
+form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #34495e; /* 폼 배경색을 어두운 회색으로 변경 */
+    color: #ecf0f1; /* 폼 텍스트 색상 */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+form input, form button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #2c3e50; /* 입력 필드와 버튼 배경색 */
+    color: #ecf0f1; /* 입력 필드와 버튼 텍스트 색상 */
+}
+form button {
+    background-color: #1abc9c; /* 버튼 기본 배경색 */
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #16a085; /* 버튼 호버 배경색 */
+}
+video, canvas {
+    display: block;
+    margin: 20px auto;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+#captureButton {
+    display: block;
+    margin: 10px auto;
+    padding: 10px 20px;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+#captureButton:hover {
+    background-color: #1976D2;
+}
+```
+# 실행 결과
+![스크린샷 2025-05-21 170848](https://github.com/user-attachments/assets/6170a17e-fd2b-4012-b9ac-2fa45968e803)
 
