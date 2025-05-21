@@ -282,7 +282,7 @@ if __name__ == '__main__':
 </html>
 ```
 # style.css에서 색상 변경과 가운데 정렬 추가
-style.css에 코드를 추가해서 색상과 배경색을 변경함.
+- style.css에 코드를 추가해서 색상과 배경색을 변경함.
 3️⃣ style.css 코드
 ```
 body {
