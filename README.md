@@ -2,8 +2,7 @@
 기존의 https://github.com/pocky75/webApp 확장버전
 
 # 1차 확장 기능☝️
-웹브라우저에서 파일을 선택해서 서버로 전송하고,
-서버는 이미지 파일을 /static/uploads 폴더에 저장함
+웹브라우저에서 파일을 선택해서 서버로 전송하고, 서버는 이미지 파일을 /static/uploads 폴더에 저장함
 addbook.txt 파일에 내가 적은 내용저장
 ![스크린샷 2025-05-21 162344](https://github.com/user-attachments/assets/4d2bf0a2-8696-42df-87d2-42bb60da36e4)
 
